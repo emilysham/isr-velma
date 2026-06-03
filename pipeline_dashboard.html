@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ISR Pipeline – Open Opportunities</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #f0f4f8;
+      color: #1e293b;
+      min-height: 100vh;
+    }
+
+    /* ── Header ─────────────────────────────────────── */
+    .header {
+      background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+      color: white;
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .header-left h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.3px; }
+    .header-left .subtitle {
+      font-size: 0.78rem; opacity: 0.85; margin-top: 2px;
+    }
+    .header-right { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+
+    .live-badge {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.18);
+      border-radius: 20px; padding: 4px 12px;
+      font-size: 0.8rem; font-weight: 700;
+    }
+    .pulse-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #86efac;
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50%      { opacity:0.5; transform:scale(0.8); }
+    }
+
+    .meta { font-size: 0.78rem; opacity: 0.85; }
+    .meta span { font-weight: 600; }
+
+    .btn-refresh {
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.4);
+      color: white; border-radius: 8px;
+      padding: 7px 16px; font-size: 0.82rem;
+      cursor: pointer; font-weight: 600;
+      transition: background 0.2s;
+    }
+    .btn-refresh:hover { background: rgba(255,255,255,0.32); }
+
+    /* ── Banners ──────────────────────────────────── */
+    #error-banner {
+      display: none;
+      background: #fef2f2; color: #b91c1c;
+      border-bottom: 2px solid #fca5a5;
+      padding: 10px 32px; font-size: 0.85rem;
+    }
+    #col-warn {
+      display: none;
+      background: #fffbeb; color: #92400e;
+      border-bottom: 2px solid #fcd34d;
+      padding: 8px 32px; font-size: 0.82rem;
+    }
+
+    /* ── Filter bar ───────────────────────────────── */
+    .filter-bar {
+      background: #f0fdfa;
+      border-bottom: 1px solid #99f6e4;
+      padding: 10px 32px;
+      display: flex; gap: 24px; flex-wrap: wrap; align-items: center;
+    }
+    .filter-tag {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.78rem; color: #0f766e; font-weight: 600;
+    }
+    .filter-tag .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #0d9488;
+    }
+    .filter-sep { color: #cbd5e1; font-size: 0.9rem; }
+    .excl-chip {
+      background: #fee2e2; color: #991b1b;
+      border-radius: 12px; padding: 2px 10px;
+      font-size: 0.72rem; font-weight: 700;
+    }
+
+    /* ── Summary bar ──────────────────────────────── */
+    .summary-bar {
+      background: white;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 14px 32px;
+      display: flex; gap: 40px; flex-wrap: wrap; align-items: center;
+    }
+    .summary-item { display: flex; flex-direction: column; }
+    .summary-label {
+      font-size: 0.68rem; text-transform: uppercase;
+      letter-spacing: 0.8px; color: #64748b; font-weight: 600;
+    }
+    .summary-value { font-size: 1.6rem; font-weight: 800; color: #1e293b; }
+    .summary-value.teal { color: #0d9488; }
+    .summary-sub { font-size: 0.72rem; color: #94a3b8; margin-top: 1px; }
+
+    /* ── Section wrapper ──────────────────────────── */
+    .section {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+    .section-title {
+      font-size: 0.75rem; text-transform: uppercase;
+      letter-spacing: 1px; color: #64748b; font-weight: 700;
+      margin: 28px 0 14px;
+    }
+
+    /* ── Monthly chart ────────────────────────────── */
+    .chart-card {
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.05);
+      padding: 24px 28px;
+      margin-bottom: 4px;
+    }
+    .chart-title {
+      font-size: 0.9rem; font-weight: 700; color: #374151;
+      margin-bottom: 20px;
+    }
+    #month-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      height: 140px;
+    }
+    .bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      height: 100%;
+    }
+    .bar-value {
+      font-size: 0.8rem; font-weight: 700; color: #374151;
+      min-height: 18px;
+    }
+    .bar-wrap {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      align-items: flex-end;
+      background: #f1f5f9;
+      border-radius: 6px 6px 0 0;
+      overflow: hidden;
+      min-width: 32px;
+    }
+    .bar-fill {
+      width: 100%;
+      background: linear-gradient(180deg, #5eead4, #0d9488);
+      border-radius: 4px 4px 0 0;
+      transition: height 0.6s ease;
+      min-height: 2px;
+    }
+    .bar-current {
+      background: linear-gradient(180deg, #67e8f9, #0284c7);
+    }
+    .bar-label {
+      font-size: 0.72rem; color: #64748b; font-weight: 600;
+      text-align: center;
+    }
+
+    /* ── ISR grid ─────────────────────────────────── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 18px;
+      padding-bottom: 32px;
+    }
+
+    /* ── Card ─────────────────────────────────────── */
+    .card {
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.05);
+      overflow: hidden;
+      transition: transform 0.18s, box-shadow 0.18s;
+    }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,0.1); }
+
+    .card-header {
+      padding: 16px 20px 12px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .card-name { font-size: 1.05rem; font-weight: 700; }
+    .opp-count {
+      font-size: 2rem; font-weight: 900;
+      color: #0d9488; line-height: 1;
+    }
+
+    .card-body { padding: 14px 20px 16px; }
+    .card-row {
+      display: flex; justify-content: space-between;
+      font-size: 0.78rem; color: #64748b; margin-bottom: 6px;
+    }
+    .card-row .card-stat { font-weight: 700; color: #374151; }
+
+    .progress-track {
+      height: 8px; border-radius: 99px;
+      background: #e2e8f0; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; border-radius: 99px;
+      transition: width 0.6s ease;
+    }
+    .fill-teal { background: linear-gradient(90deg, #5eead4, #0d9488); }
+    .fill-blue { background: linear-gradient(90deg, #60a5fa, #2563eb); }
+
+    .card-count-label {
+      font-size: 0.7rem; color: #94a3b8; margin-top: 8px;
+      text-align: right; font-weight: 500;
+    }
+
+    /* ── Month breakdown inside card ─────────────── */
+    .card-months {
+      margin-top: 12px;
+      border-top: 1px solid #f1f5f9;
+      padding-top: 10px;
+    }
+    .month-row {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 4px;
+    }
+    .month-lbl { font-size: 0.68rem; color: #94a3b8; width: 44px; flex-shrink: 0; }
+    .month-bar-wrap { flex: 1; height: 6px; background: #f1f5f9; border-radius: 99px; overflow: hidden; }
+    .month-bar-fill { height: 100%; border-radius: 99px; background: #0d9488; transition: width 0.5s; }
+    .month-cnt { font-size: 0.68rem; color: #374151; font-weight: 700; width: 16px; text-align: right; }
+
+    /* ── Stage breakdown ──────────────────────────── */
+    .stage-card {
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.05);
+      padding: 20px 24px 24px;
+      margin-bottom: 4px;
+    }
+    .stage-title { font-size: 0.9rem; font-weight: 700; color: #374151; margin-bottom: 16px; }
+    .stage-row {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 10px;
+    }
+    .stage-name { font-size: 0.78rem; font-weight: 600; color: #374151; width: 180px; flex-shrink: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .stage-track { flex: 1; height: 10px; background: #f1f5f9; border-radius: 99px; overflow: hidden; }
+    .stage-fill { height: 100%; border-radius: 99px; transition: width 0.6s; }
+    .stage-count { font-size: 0.78rem; color: #64748b; font-weight: 600; white-space: nowrap; min-width: 72px; text-align: right; }
+
+    /* ── Empty / loading ──────────────────────────── */
+    .empty-state {
+      grid-column: 1/-1;
+      text-align: center; padding: 48px;
+      color: #94a3b8; font-size: 0.95rem;
+    }
+
+    /* ── Opportunities table ─────────────────────── */
+    .table-card {
+      background: white;
+      border-radius: 14px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.05);
+      overflow: hidden;
+      margin-bottom: 32px;
+    }
+    .table-toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px 12px;
+      border-bottom: 1px solid #f1f5f9;
+      flex-wrap: wrap; gap: 10px;
+    }
+    .table-title { font-size: 0.9rem; font-weight: 700; color: #374151; }
+    .table-count { font-size: 0.78rem; color: #64748b; }
+    .tbl-search {
+      border: 1px solid #e2e8f0; border-radius: 8px;
+      padding: 6px 12px; font-size: 0.82rem; color: #1e293b;
+      outline: none; width: 220px;
+      transition: border-color 0.2s;
+    }
+    .tbl-search:focus { border-color: #0d9488; }
+    .opp-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    .opp-table thead tr {
+      background: #f8fafc;
+      border-bottom: 2px solid #e2e8f0;
+    }
+    .opp-table th {
+      padding: 10px 16px; text-align: left;
+      font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.7px;
+      color: #64748b; cursor: pointer; user-select: none;
+      white-space: nowrap;
+    }
+    .opp-table th:hover { color: #0d9488; }
+    .opp-table th .sort-arrow { margin-left: 4px; opacity: 0.4; }
+    .opp-table th.sorted .sort-arrow { opacity: 1; color: #0d9488; }
+    .opp-table tbody tr {
+      border-bottom: 1px solid #f1f5f9;
+      transition: background 0.12s;
+    }
+    .opp-table tbody tr:hover { background: #f0fdfa; }
+    .opp-table td { padding: 10px 16px; color: #374151; vertical-align: middle; }
+    .opp-table td.owner { font-weight: 600; color: #0d9488; white-space: nowrap; }
+    .opp-table td.created { color: #94a3b8; white-space: nowrap; font-size: 0.76rem; }
+    .stage-pill {
+      display: inline-block;
+      padding: 2px 10px; border-radius: 12px;
+      font-size: 0.7rem; font-weight: 700;
+      background: #dbeafe; color: #1d4ed8;
+    }
+    .table-empty {
+      padding: 32px; text-align: center;
+      color: #94a3b8; font-size: 0.9rem;
+    }
+    .tbl-pagination {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 20px;
+      border-top: 1px solid #f1f5f9;
+      font-size: 0.78rem; color: #64748b;
+    }
+    .tbl-pages { display: flex; gap: 4px; }
+    .tbl-pg-btn {
+      border: 1px solid #e2e8f0; background: white;
+      border-radius: 6px; padding: 4px 10px;
+      cursor: pointer; font-size: 0.78rem; color: #374151;
+      transition: all 0.15s;
+    }
+    .tbl-pg-btn:hover { background: #f0fdfa; border-color: #0d9488; color: #0d9488; }
+    .tbl-pg-btn.active { background: #0d9488; border-color: #0d9488; color: white; }
+    .tbl-pg-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    /* ── Debug panel ──────────────────────────────── */
+    #debug-panel {
+      display: none;
+      background: #1e293b; color: #94a3b8;
+      font-family: monospace; font-size: 0.72rem;
+      padding: 12px 32px;
+      white-space: pre-wrap;
+      border-bottom: 1px solid #334155;
+    }
+    .btn-debug {
+      background: none; border: 1px solid rgba(255,255,255,0.3);
+      color: rgba(255,255,255,0.7); border-radius: 6px;
+      padding: 4px 10px; font-size: 0.72rem;
+      cursor: pointer;
+    }
+    .btn-debug:hover { background: rgba(255,255,255,0.1); }
+
+    /* ── Responsive ───────────────────────────────── */
+    @media (max-width: 640px) {
+      .header { padding: 16px; }
+      .section { padding: 0 16px; }
+      .summary-bar { padding: 12px 16px; gap: 20px; }
+      .filter-bar { padding: 8px 16px; }
+    }
+      /* ── Password gate ────────────────────────────── */
+    #pw-gate {
+      position: fixed; inset: 0; z-index: 9999;
+      background: linear-gradient(135deg, #0f766e 0%, #0d9488 100%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pw-box {
+      background: white; border-radius: 18px;
+      padding: 40px 36px; width: 340px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      text-align: center;
+    }
+    .pw-logo {
+      width: 48px; height: 48px; border-radius: 14px;
+      background: linear-gradient(135deg, #0f766e, #0d9488);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 18px;
+      font-size: 1.4rem;
+    }
+    .pw-title { font-size: 1.2rem; font-weight: 800; color: #1e293b; margin-bottom: 6px; }
+    .pw-sub   { font-size: 0.82rem; color: #94a3b8; margin-bottom: 24px; }
+    .pw-input {
+      width: 100%; padding: 11px 14px;
+      border: 2px solid #e2e8f0; border-radius: 10px;
+      font-size: 1rem; color: #1e293b; outline: none;
+      transition: border-color 0.2s;
+      text-align: center; letter-spacing: 2px;
+    }
+    .pw-input:focus { border-color: #0d9488; }
+    .pw-input.shake {
+      animation: shake 0.4s ease;
+      border-color: #dc2626;
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%,60%  { transform: translateX(-8px); }
+      40%,80%  { transform: translateX(8px); }
+    }
+    .pw-btn {
+      width: 100%; margin-top: 14px;
+      background: linear-gradient(135deg, #0f766e, #0d9488);
+      color: white; border: none; border-radius: 10px;
+      padding: 12px; font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; transition: opacity 0.2s;
+    }
+    .pw-btn:hover { opacity: 0.88; }
+    .pw-error {
+      margin-top: 10px; font-size: 0.8rem;
+      color: #dc2626; min-height: 18px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Password gate ───────────────────────────────── -->
+<div id="pw-gate">
+  <div class="pw-box">
+    <div class="pw-logo">🔒</div>
+    <div class="pw-title">ISR Pipeline</div>
+    <div class="pw-sub">Enter password to continue</div>
+    <input id="pw-input" class="pw-input" type="password"
+           placeholder="••••••••••••"
+           onkeydown="if(event.key==='Enter') checkPw()" autofocus />
+    <button class="pw-btn" onclick="checkPw()">Unlock</button>
+    <div class="pw-error" id="pw-error"></div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const HASH = '9a15b8e2f3d64c7a1e0b9f2c4d8e6a3b'; // sentinel, replaced below
+    const PW   = 'Appiervelma';
+
+    if (sessionStorage.getItem('ipa') === '1') unlock();
+
+    window.checkPw = function () {
+      const val = document.getElementById('pw-input').value;
+      if (val === PW) {
+        sessionStorage.setItem('ipa', '1');
+        unlock();
+      } else {
+        const inp = document.getElementById('pw-input');
+        const err = document.getElementById('pw-error');
+        inp.classList.remove('shake');
+        void inp.offsetWidth;
+        inp.classList.add('shake');
+        err.textContent = 'Incorrect password. Try again.';
+        inp.value = '';
+        inp.focus();
+      }
+    };
+
+    function unlock() {
+      const gate = document.getElementById('pw-gate');
+      if (gate) gate.remove();
+    }
+  })();
+</script>
+
+<!-- ── Header ─────────────────────────────────────── -->
+<div class="header">
+  <div class="header-left">
+    <h1>ISR Pipeline – Open Opportunities</h1>
+    <div class="subtitle">Created in last 6 months &nbsp;·&nbsp; Excluding Closed Won / Closed Lost</div>
+  </div>
+  <div class="header-right">
+    <div class="live-badge">
+      <div class="pulse-dot"></div>
+      LIVE
+    </div>
+    <div class="meta">
+      Updated: <span id="last-updated">—</span> &nbsp;|&nbsp;
+      Next refresh in <span id="countdown">30</span>s
+    </div>
+    <button class="btn-debug" onclick="toggleDebug()">Debug</button>
+    <button class="btn-refresh" onclick="fetchData()">&#8635; Refresh Now</button>
+  </div>
+</div>
+
+<!-- ── Debug panel ────────────────────────────────── -->
+<div id="debug-panel"></div>
+
+<!-- ── Error / warning banners ────────────────────── -->
+<div id="error-banner">
+  ⚠ Could not load data — make sure the sheet is shared as <strong>"Anyone with the link — Viewer"</strong>. Retrying automatically…
+</div>
+<div id="col-warn"></div>
+
+<!-- ── Filter bar ─────────────────────────────────── -->
+<div class="filter-bar">
+  <div class="filter-tag">
+    <div class="dot"></div>
+    Created: <strong id="date-from">…</strong> – <strong id="date-to">…</strong>
+  </div>
+  <span class="filter-sep">|</span>
+  <div class="filter-tag">
+    Excluding: <span class="excl-chip">Closed Won</span>&nbsp;<span class="excl-chip">Closed Lost</span>
+  </div>
+</div>
+
+<!-- ── Summary bar ────────────────────────────────── -->
+<div class="summary-bar">
+  <div class="summary-item">
+    <span class="summary-label">Open opportunities</span>
+    <span class="summary-value teal" id="sum-total">—</span>
+    <span class="summary-sub">last 6 months</span>
+  </div>
+  <div class="summary-item">
+    <span class="summary-label">Active ISRs</span>
+    <span class="summary-value" id="sum-isrs">—</span>
+  </div>
+  <div class="summary-item">
+    <span class="summary-label">Avg per ISR</span>
+    <span class="summary-value" id="sum-avg">—</span>
+  </div>
+  <div class="summary-item">
+    <span class="summary-label">Closed (excluded)</span>
+    <span class="summary-value" id="sum-excluded" style="color:#dc2626">—</span>
+  </div>
+</div>
+
+<!-- ── Main content ───────────────────────────────── -->
+<div class="section">
+
+  <!-- Monthly chart -->
+  <div class="section-title">Opportunities created per month</div>
+  <div class="chart-card">
+    <div id="month-chart">
+      <!-- injected by JS -->
+    </div>
+  </div>
+
+  <!-- Stage breakdown -->
+  <div class="section-title">Stage breakdown</div>
+  <div id="stage-breakdown" class="stage-card" style="display:none"></div>
+
+  <!-- Opportunities table -->
+  <div class="section-title">All open opportunities</div>
+  <div class="table-card">
+    <div class="table-toolbar">
+      <div>
+        <span class="table-title">Opportunity details</span>
+        <span class="table-count" id="tbl-count"></span>
+      </div>
+      <input class="tbl-search" id="tbl-search" type="search" placeholder="Search name, account, owner…" oninput="filterTable()" />
+    </div>
+    <div style="overflow-x:auto">
+      <table class="opp-table" id="opp-table">
+        <thead>
+          <tr>
+            <th onclick="sortTable(0)" id="th-0">Opportunity Owner <span class="sort-arrow">↕</span></th>
+            <th onclick="sortTable(1)" id="th-1">Account Name <span class="sort-arrow">↕</span></th>
+            <th onclick="sortTable(2)" id="th-2">Opportunity Name <span class="sort-arrow">↕</span></th>
+            <th onclick="sortTable(3)" id="th-3">Stage <span class="sort-arrow">↕</span></th>
+            <th onclick="sortTable(4)" id="th-4">Created Date <span class="sort-arrow">↕</span></th>
+            <th onclick="sortTable(5)" id="th-5">1st Meeting Date <span class="sort-arrow">↕</span></th>
+          </tr>
+        </thead>
+        <tbody id="opp-tbody"></tbody>
+      </table>
+    </div>
+    <div class="tbl-pagination">
+      <span id="tbl-page-info"></span>
+      <div class="tbl-pages" id="tbl-pages"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  /* ── Config ─────────────────────────────────────── */
+  const SHEET_ID    = '15Z2-mbqM3n_u2agV4csy5m72f7NbwCH9r9G1zqE0g-A';
+  const REFRESH_S   = 30;
+  const CREATED_COL = 10;   // column K = index 10 (0-based)
+  const CLOSED_STAGES = new Set(['Closed Won', 'Closed Lost', 'closed won', 'closed lost']);
+
+  /* ── State ──────────────────────────────────────── */
+  let countdown      = REFRESH_S;
+  let timer;
+  let stageColIdx    = -1;
+  let isrColIdx      = -1;
+  let ownerColIdx    = -1;
+  let accountColIdx  = -1;
+  let oppNameColIdx  = -1;
+  let meetingColIdx  = -1;
+  let debugLog       = '';
+
+  /* table state */
+  let allRows      = [];   // non-closed, created in last 6 months — for chart/summary
+  let tableAllRows = [];   // all non-closed, no date restriction — for table
+  let filteredRows = [];
+  let sortColIdx   = 4;   // default sort: Created Date
+  let sortAsc      = false;
+  const PAGE_SIZE  = 20;
+  let currentPage  = 1;
+
+  /* ── JSONP callback ─────────────────────────────── */
+  window.google = {
+    visualization: {
+      Query: {
+        setResponse(data) {
+          if (data.status !== 'ok') {
+            showError(true);
+          } else {
+            showError(false);
+            processData(data.table);
+          }
+          document.getElementById('last-updated').textContent =
+            new Date().toLocaleTimeString();
+          startCountdown();
+        }
+      }
+    }
+  };
+
+  /* ── Fetch via JSONP (works from file://) ────────── */
+  function fetchData() {
+    clearInterval(timer);
+    countdown = REFRESH_S;
+
+    const old = document.getElementById('gviz-script');
+    if (old) old.remove();
+
+    const script = document.createElement('script');
+    script.id  = 'gviz-script';
+    script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&t=${Date.now()}`;
+    script.onerror = () => {
+      showError(true);
+      document.getElementById('last-updated').textContent =
+        new Date().toLocaleTimeString();
+      startCountdown();
+    };
+    document.head.appendChild(script);
+  }
+
+  /* ── Process raw gviz table ─────────────────────── */
+  function processData(table) {
+    const cols = table.cols;
+    const rows = table.rows;
+
+    detectColumns(cols);
+
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+    const cutoff = new Date();
+    cutoff.setMonth(cutoff.getMonth() - 6);
+    cutoff.setHours(0, 0, 0, 0);
+
+    document.getElementById('date-from').textContent = fmtDate(cutoff);
+    document.getElementById('date-to').textContent   = fmtDate(today);
+
+    /* Build ordered month keys for last 6 months */
+    const monthKeys = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(1);
+      d.setMonth(d.getMonth() - i);
+      monthKeys.push(`${d.getFullYear()}-${pad(d.getMonth() + 1)}`);
+    }
+    const monthCounts = Object.fromEntries(monthKeys.map(k => [k, 0]));
+    allRows      = [];
+    tableAllRows = [];
+    const isrCounts   = {};
+    const stageCounts = {};
+    let totalOpen     = 0;
+    let skippedClosed = 0;
+    let skippedOld    = 0;
+    let skippedNoDate = 0;
+
+    for (const row of rows) {
+      const cells = row.c;
+
+      /* --- Parse created date --- */
+      const raw = cells[CREATED_COL];
+      if (!raw || (raw.v == null && raw.f == null)) { skippedNoDate++; continue; }
+      const createdDate = parseGvizDate(raw.v, raw.f);
+      if (!createdDate || isNaN(createdDate)) { skippedNoDate++; continue; }
+
+      /* --- Parse stage --- */
+      const stageRaw = stageColIdx >= 0 ? (cells[stageColIdx]?.v ?? '') : '';
+      const stage    = String(stageRaw).trim();
+      const isClosed = CLOSED_STAGES.has(stage) || CLOSED_STAGES.has(stage.toLowerCase());
+
+      /* --- Parse meeting date --- */
+      const meetingRaw  = meetingColIdx >= 0 ? cells[meetingColIdx] : null;
+      const meetingDate = meetingRaw ? parseGvizDate(meetingRaw.v, meetingRaw.f) : null;
+
+      /* --- Build shared row object --- */
+      const isr = isrColIdx >= 0
+        ? String(cells[isrColIdx]?.v ?? 'Unknown').trim() || 'Unknown'
+        : 'Unknown';
+
+      const rowObj = {
+        owner:      ownerColIdx   >= 0 ? String(cells[ownerColIdx]?.v   ?? '').trim() : isr,
+        account:    accountColIdx >= 0 ? String(cells[accountColIdx]?.v ?? '').trim() : '',
+        name:       oppNameColIdx >= 0 ? String(cells[oppNameColIdx]?.v ?? '').trim() : '',
+        stage, isr,
+        created:    createdDate,
+        createdFmt: fmtDate(createdDate),
+        meeting:    meetingDate,
+        meetingFmt: meetingDate && !isNaN(meetingDate) ? fmtDate(meetingDate) : '—',
+      };
+
+      /* --- tableAllRows: all non-closed rows, no date restriction --- */
+      if (!isClosed) {
+        tableAllRows.push(rowObj);
+      } else {
+        skippedClosed++;
+      }
+
+      /* --- allRows (chart/summary): non-closed + created in last 6 months --- */
+      if (isClosed || createdDate < cutoff || createdDate > today) {
+        if (!isClosed) skippedOld++;
+        continue;
+      }
+
+      totalOpen++;
+      allRows.push(rowObj);
+      isrCounts[isr] = (isrCounts[isr] || 0) + 1;
+      const mk = `${createdDate.getFullYear()}-${pad(createdDate.getMonth() + 1)}`;
+      if (mk in monthCounts) monthCounts[mk]++;
+      if (stage) stageCounts[stage] = (stageCounts[stage] || 0) + 1;
+    }
+
+    debugLog = [
+      `Rows: ${rows.length} total`,
+      `Columns (${cols.length}): ${cols.map((c,i)=>`[${i}] ${c.label||c.id||'—'}`).join(', ')}`,
+      `Detected — ISR col: ${isrColIdx < 0 ? 'NOT FOUND' : `${isrColIdx} (${cols[isrColIdx]?.label})`}`,
+      `          Stage col: ${stageColIdx < 0 ? 'NOT FOUND' : `${stageColIdx} (${cols[stageColIdx]?.label})`}`,
+      `          Created col: ${CREATED_COL} (${cols[CREATED_COL]?.label})`,
+      `Filtered — open: ${totalOpen}, skipped closed: ${skippedClosed}, skipped old: ${skippedOld}, no-date: ${skippedNoDate}`,
+    ].join('\n');
+    document.getElementById('debug-panel').textContent = debugLog;
+
+    renderSummary(totalOpen, isrCounts, skippedClosed);
+    renderMonthChart(monthCounts, monthKeys, today);
+    renderStageBreakdown(stageCounts, totalOpen);
+    showColWarning(cols);
+    filteredRows = buildTableRows();
+    currentPage  = 1;
+    renderTable();
+  }
+
+  /* ── Auto-detect columns ────────────────────────── */
+  function detectColumns(cols) {
+    stageColIdx   = -1;
+    isrColIdx     = -1;
+    ownerColIdx   = -1;
+    accountColIdx = -1;
+    oppNameColIdx = -1;
+
+    cols.forEach((col, i) => {
+      const lbl = (col.label || col.id || '').toLowerCase().trim();
+
+      if (/\bstage\b|\bpipeline\b|\bdeal.?stage\b/.test(lbl)) {
+        if (stageColIdx < 0) stageColIdx = i;
+      }
+
+      /* "Opportunity Owner" takes priority — always overrides generic owner matches */
+      if (/opportunity.?owner/.test(lbl)) {
+        ownerColIdx = i;
+        isrColIdx   = i;  // always prefer "Opportunity Owner" over "Owner Role" etc.
+      } else if (isrColIdx < 0 && (
+                 /\bisr\b/.test(lbl) || /\bsales.?rep\b/.test(lbl) ||
+                 /\baccount.?exec/.test(lbl) || /\bassigned/.test(lbl) ||
+                 /\bcreated.?by\b/.test(lbl))) {
+        isrColIdx   = i;
+        ownerColIdx = i;
+      }
+
+      /* Account Name */
+      if (/account.?name/.test(lbl) || lbl === 'account' || lbl === 'company' || lbl === 'company name') {
+        if (accountColIdx < 0) accountColIdx = i;
+      }
+
+      /* Opportunity Name */
+      if (/opportunity.?name/.test(lbl) || /opp.?name/.test(lbl) || /deal.?name/.test(lbl) ||
+          lbl === 'opportunity') {
+        if (oppNameColIdx < 0) oppNameColIdx = i;
+      }
+
+      /* 1st Meeting Date */
+      if (/meeting.?date/.test(lbl) || /1st.?meeting/.test(lbl) || /first.?meeting/.test(lbl)) {
+        if (meetingColIdx < 0) meetingColIdx = i;
+      }
+    });
+  }
+
+  /* ── Render summary bar ──────────────────────────── */
+  function renderSummary(total, isrCounts, skippedClosed) {
+    const isrList = Object.keys(isrCounts).filter(k => k !== 'Unknown');
+    const avg = isrList.length > 0
+      ? (total / isrList.length).toFixed(1)
+      : '—';
+
+    document.getElementById('sum-total').textContent    = total;
+    document.getElementById('sum-isrs').textContent     = isrList.length;
+    document.getElementById('sum-avg').textContent      = avg;
+    document.getElementById('sum-excluded').textContent = skippedClosed;
+  }
+
+  /* ── Render monthly bar chart ────────────────────── */
+  function renderMonthChart(monthCounts, monthKeys, today) {
+    const entries  = monthKeys.map(k => [k, monthCounts[k]]);
+    const maxCount = Math.max(...entries.map(([,v]) => v), 1);
+    const curKey   = `${today.getFullYear()}-${pad(today.getMonth() + 1)}`;
+
+    document.getElementById('month-chart').innerHTML = entries.map(([key, count]) => {
+      const [yr, mo] = key.split('-').map(Number);
+      const label    = new Date(yr, mo - 1, 1)
+        .toLocaleDateString('en', { month: 'short', year: '2-digit' });
+      const pct      = Math.round((count / maxCount) * 100);
+      const isCur    = key === curKey;
+
+      return `
+        <div class="bar-col">
+          <div class="bar-value">${count || ''}</div>
+          <div class="bar-wrap">
+            <div class="bar-fill${isCur ? ' bar-current' : ''}"
+                 style="height:${Math.max(pct, count > 0 ? 4 : 0)}%"></div>
+          </div>
+          <div class="bar-label">${label}${isCur ? ' ●' : ''}</div>
+        </div>`;
+    }).join('');
+  }
+
+  /* ── Render stage breakdown ──────────────────────── */
+  function renderStageBreakdown(stageCounts, total) {
+    const el      = document.getElementById('stage-breakdown');
+    const entries = Object.entries(stageCounts).sort(([,a],[,b]) => b - a);
+
+    if (!total || entries.length === 0) {
+      el.style.display = 'none';
+      return;
+    }
+
+    const palette = ['#0d9488','#2563eb','#7c3aed','#d97706','#059669','#dc2626','#ea580c','#0891b2'];
+
+    el.style.display = 'block';
+    el.innerHTML = `
+      <div class="stage-title">Stage Breakdown (${total} open opportunities)</div>
+      ${entries.map(([stage, count], i) => {
+        const pct = Math.round((count / total) * 100);
+        return `
+          <div class="stage-row">
+            <span class="stage-name" title="${esc(stage)}">${esc(stage)}</span>
+            <div class="stage-track">
+              <div class="stage-fill" style="width:${pct}%;background:${palette[i % palette.length]}"></div>
+            </div>
+            <span class="stage-count">${count} &nbsp;(${pct}%)</span>
+          </div>`;
+      }).join('')}`;
+  }
+
+  /* ── Table render / sort / filter / paginate ─────── */
+  function renderTable() {
+    const tbody   = document.getElementById('opp-tbody');
+    const total   = filteredRows.length;
+    const start   = (currentPage - 1) * PAGE_SIZE;
+    const pageRows = filteredRows.slice(start, start + PAGE_SIZE);
+
+    document.getElementById('tbl-count').textContent =
+      total ? `  —  ${total} opportunit${total === 1 ? 'y' : 'ies'}` : '';
+
+    if (!pageRows.length) {
+      tbody.innerHTML = `<tr><td colspan="5" class="table-empty">No matching opportunities.</td></tr>`;
+    } else {
+      tbody.innerHTML = pageRows.map(r => `
+        <tr>
+          <td class="owner">${esc(r.owner   || '—')}</td>
+          <td>${esc(r.account || '—')}</td>
+          <td>${esc(r.name    || '—')}</td>
+          <td><span class="stage-pill">${esc(r.stage || '—')}</span></td>
+          <td class="created">${esc(r.createdFmt)}</td>
+          <td class="created">${esc(r.meetingFmt)}</td>
+        </tr>`).join('');
+    }
+
+    renderPagination(total);
+  }
+
+  function renderPagination(total) {
+    const totalPages = Math.ceil(total / PAGE_SIZE) || 1;
+    const info = document.getElementById('tbl-page-info');
+    const pages = document.getElementById('tbl-pages');
+
+    const start = Math.min((currentPage - 1) * PAGE_SIZE + 1, total);
+    const end   = Math.min(currentPage * PAGE_SIZE, total);
+    info.textContent = total ? `Showing ${start}–${end} of ${total}` : 'No results';
+
+    let html = `<button class="tbl-pg-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹</button>`;
+    const range = paginationRange(currentPage, totalPages);
+    range.forEach(p => {
+      if (p === '…') {
+        html += `<span style="padding:4px 6px;color:#94a3b8">…</span>`;
+      } else {
+        html += `<button class="tbl-pg-btn ${p===currentPage?'active':''}" onclick="goPage(${p})">${p}</button>`;
+      }
+    });
+    html += `<button class="tbl-pg-btn" onclick="goPage(${currentPage+1})" ${currentPage===totalPages?'disabled':''}>›</button>`;
+    pages.innerHTML = html;
+  }
+
+  function paginationRange(cur, total) {
+    if (total <= 7) return Array.from({length: total}, (_,i) => i+1);
+    const pages = new Set([1, total, cur, cur-1, cur+1].filter(p => p >= 1 && p <= total));
+    const sorted = [...pages].sort((a,b) => a-b);
+    const result = [];
+    sorted.forEach((p, i) => {
+      if (i > 0 && p - sorted[i-1] > 1) result.push('…');
+      result.push(p);
+    });
+    return result;
+  }
+
+  function goPage(p) {
+    const totalPages = Math.ceil(filteredRows.length / PAGE_SIZE) || 1;
+    currentPage = Math.max(1, Math.min(p, totalPages));
+    renderTable();
+  }
+
+  /* exclude if meeting date is within the last 6 months OR in the future
+     i.e. only show opportunities whose meeting was more than 6 months ago */
+  function buildTableRows() {
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+    sixMonthsAgo.setHours(0, 0, 0, 0);
+
+    return tableAllRows.filter(r => {
+      if (!r.meeting || isNaN(r.meeting)) return true;
+      return r.meeting < sixMonthsAgo;
+    });
+  }
+
+  function filterTable() {
+    const q    = document.getElementById('tbl-search').value.toLowerCase().trim();
+    const base = buildTableRows();
+    filteredRows = q
+      ? base.filter(r =>
+          (r.owner   || '').toLowerCase().includes(q) ||
+          (r.account || '').toLowerCase().includes(q) ||
+          (r.name    || '').toLowerCase().includes(q) ||
+          (r.stage   || '').toLowerCase().includes(q))
+      : base;
+    currentPage = 1;
+    renderTable();
+  }
+
+  function sortTable(col) {
+    if (sortColIdx === col) { sortAsc = !sortAsc; }
+    else { sortColIdx = col; sortAsc = col !== 4; }
+
+    /* update header arrows */
+    for (let i = 0; i < 6; i++) {
+      const th = document.getElementById(`th-${i}`);
+      if (!th) continue;
+      th.classList.toggle('sorted', i === sortColIdx);
+      const arrow = th.querySelector('.sort-arrow');
+      if (arrow) arrow.textContent = i === sortColIdx ? (sortAsc ? ' ↑' : ' ↓') : ' ↕';
+    }
+
+    const key = ['owner','account','name','stage','created','meeting'][col];
+    filteredRows.sort((a, b) => {
+      let av = a[key] ?? '', bv = b[key] ?? '';
+      if (av instanceof Date) return sortAsc ? av - bv : bv - av;
+      av = String(av).toLowerCase(); bv = String(bv).toLowerCase();
+      return sortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
+    });
+    currentPage = 1;
+    renderTable();
+  }
+
+  /* ── Column warning ──────────────────────────────── */
+  function showColWarning(cols) {
+    const el      = document.getElementById('col-warn');
+    const missing = [];
+    if (stageColIdx < 0) missing.push('Stage');
+    if (isrColIdx   < 0) missing.push('ISR / Owner');
+
+    if (missing.length) {
+      el.style.display = 'block';
+      const headers = cols.map((c,i) => `[${i}] "${c.label || c.id || '—'}"`).join(', ');
+      el.textContent = `⚠ Could not auto-detect column(s): ${missing.join(', ')}. ` +
+        `Found headers: ${headers}. Open Debug to inspect.`;
+    } else {
+      el.style.display = 'none';
+    }
+  }
+
+  /* ── Error banner ────────────────────────────────── */
+  function showError(show) {
+    document.getElementById('error-banner').style.display = show ? 'block' : 'none';
+  }
+
+  /* ── Countdown ───────────────────────────────────── */
+  function startCountdown() {
+    clearInterval(timer);
+    countdown = REFRESH_S;
+    document.getElementById('countdown').textContent = countdown;
+    timer = setInterval(() => {
+      countdown--;
+      document.getElementById('countdown').textContent = Math.max(0, countdown);
+      if (countdown <= 0) fetchData();
+    }, 1000);
+  }
+
+  /* ── Debug toggle ────────────────────────────────── */
+  function toggleDebug() {
+    const el = document.getElementById('debug-panel');
+    el.style.display = el.style.display === 'none' ? 'block' : 'none';
+  }
+
+  /* ── Date parser ─────────────────────────────────── */
+  function parseGvizDate(v, formatted) {
+    /* gviz Date() string: "Date(2024,0,15)" */
+    if (typeof v === 'string' && v.startsWith('Date(')) {
+      const p = v.slice(5, -1).split(',').map(Number);
+      return new Date(p[0], p[1], p[2]);
+    }
+    /* ISO or other parseable string */
+    if (typeof v === 'string') {
+      const d = new Date(v);
+      if (!isNaN(d)) return d;
+    }
+    /* Excel serial number (days since 1900-01-01, accounting for the leap year bug) */
+    if (typeof v === 'number' && v > 40000 && v < 110000) {
+      return new Date(Date.UTC(1900, 0, v - 1));
+    }
+    /* Try formatted string from "f" field */
+    if (formatted) {
+      const d = new Date(formatted);
+      if (!isNaN(d)) return d;
+    }
+    return null;
+  }
+
+  /* ── Helpers ─────────────────────────────────────── */
+  function pad(n)  { return String(n).padStart(2, '0'); }
+  function fmtDate(d) {
+    return d.toLocaleDateString('en', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+  function esc(s) {
+    return String(s)
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;');
+  }
+
+  /* ── Boot ────────────────────────────────────────── */
+  fetchData();
+</script>
+</body>
+</html>
