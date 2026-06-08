@@ -738,6 +738,7 @@
     renderStageBreakdown(stageCounts, totalOpen);
     showColWarning(cols);
     filteredRows = buildTableRows();
+    applyCurrentSort();
     currentPage  = 1;
     renderTable();
   }
@@ -920,16 +921,15 @@
     renderTable();
   }
 
-  /* exclude if meeting date is within the last 6 months OR in the future
-     i.e. only show opportunities whose meeting was more than 6 months ago */
+  /* show only opportunities where meeting_date >= today − 6 months */
   function buildTableRows() {
     const sixMonthsAgo = new Date();
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
     sixMonthsAgo.setHours(0, 0, 0, 0);
 
     return tableAllRows.filter(r => {
-      if (!r.meeting || isNaN(r.meeting)) return true;
-      return r.meeting < sixMonthsAgo;
+      if (!r.meeting || isNaN(r.meeting)) return false;
+      return r.meeting >= sixMonthsAgo;
     });
   }
 
@@ -943,8 +943,20 @@
           (r.name    || '').toLowerCase().includes(q) ||
           (r.stage   || '').toLowerCase().includes(q))
       : base;
+    applyCurrentSort();
     currentPage = 1;
     renderTable();
+  }
+
+  function applyCurrentSort() {
+    if (sortColIdx < 0) return;
+    const key = ['owner','account','name','stage','created','meeting'][sortColIdx];
+    filteredRows.sort((a, b) => {
+      let av = a[key] ?? '', bv = b[key] ?? '';
+      if (av instanceof Date) return sortAsc ? av - bv : bv - av;
+      av = String(av).toLowerCase(); bv = String(bv).toLowerCase();
+      return sortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
+    });
   }
 
   function sortTable(col) {
