@@ -536,7 +536,7 @@
 <div class="section">
 
   <!-- Monthly chart -->
-  <div class="section-title">Opportunities created per month</div>
+  <div class="section-title">1st Meeting Date – last 6 months</div>
   <div class="chart-card">
     <div id="month-chart">
       <!-- injected by JS -->
@@ -670,7 +670,7 @@
       d.setMonth(d.getMonth() - i);
       monthKeys.push(`${d.getFullYear()}-${pad(d.getMonth() + 1)}`);
     }
-    const monthCounts = Object.fromEntries(monthKeys.map(k => [k, 0]));
+    const meetingMonthCounts = Object.fromEntries(monthKeys.map(k => [k, 0]));
     allRows      = [];
     tableAllRows = [];
     const isrCounts   = {};
@@ -730,8 +730,6 @@
       totalOpen++;
       allRows.push(rowObj);
       isrCounts[isr] = (isrCounts[isr] || 0) + 1;
-      const mk = `${createdDate.getFullYear()}-${pad(createdDate.getMonth() + 1)}`;
-      if (mk in monthCounts) monthCounts[mk]++;
       if (stage) stageCounts[stage] = (stageCounts[stage] || 0) + 1;
     }
 
@@ -745,8 +743,16 @@
     ].join('\n');
     document.getElementById('debug-panel').textContent = debugLog;
 
+    /* count 1st meeting dates per month (from all non-closed rows) */
+    for (const r of tableAllRows) {
+      if (r.meeting && !isNaN(r.meeting)) {
+        const mk = `${r.meeting.getFullYear()}-${pad(r.meeting.getMonth() + 1)}`;
+        if (mk in meetingMonthCounts) meetingMonthCounts[mk]++;
+      }
+    }
+
     renderSummary(totalOpen, isrCounts, skippedClosed);
-    renderMonthChart(monthCounts, monthKeys, today);
+    renderMonthChart(meetingMonthCounts, monthKeys, today);
     renderStageBreakdown(stageCounts, totalOpen);
     showColWarning(cols);
     filteredRows = buildTableRows();
