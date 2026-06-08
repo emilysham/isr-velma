@@ -662,7 +662,6 @@
       d.setMonth(d.getMonth() - i);
       monthKeys.push(`${d.getFullYear()}-${pad(d.getMonth() + 1)}`);
     }
-    const meetingMonthCounts = Object.fromEntries(monthKeys.map(k => [k, 0]));
     allRows      = [];
     tableAllRows = [];
     const isrCounts   = {};
@@ -735,16 +734,7 @@
     ].join('\n');
     document.getElementById('debug-panel').textContent = debugLog;
 
-    /* count 1st meeting dates per month (from all non-closed rows) */
-    for (const r of tableAllRows) {
-      if (r.meeting && !isNaN(r.meeting)) {
-        const mk = `${r.meeting.getFullYear()}-${pad(r.meeting.getMonth() + 1)}`;
-        if (mk in meetingMonthCounts) meetingMonthCounts[mk]++;
-      }
-    }
-
     renderSummary(totalOpen, isrCounts, skippedClosed);
-    renderMonthChart(meetingMonthCounts, monthKeys, today);
     renderStageBreakdown(stageCounts, totalOpen);
     showColWarning(cols);
     filteredRows = buildTableRows();
